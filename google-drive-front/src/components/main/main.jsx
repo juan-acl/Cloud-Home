@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useReducer } from "react";
 import { Files } from "../files/files";
 import {NavBar} from '../navbar/navbar'
 import {url} from '../url';
@@ -9,35 +9,49 @@ import Button  from "react-bootstrap/Button";
 
 function Main() {
 
-  const [fls, setFls] = useState([]);
   const [filesupload , setFilesupload] = useState([])
+  const [axiosGet, setAxiosGet] = useState([])
 
-  useEffect(() => {
-    axios.get(url + 'file/files')
-    .then((res) => {
-          console.log(res.data)
+
+    useEffect(() => {
+    const fetchData = async () => {
+      const data = axios.get(url + 'file/files')
+      .then((res) => {
+          setFilesupload(res.data.files)
         })
-    .catch((err) => {
-        console.log('No vienen los archivos', err)
-      })
-  }, [filesupload])
-
-  
+      .catch((err) => {
+          console.log(err)
+        })
+    }
+    fetchData();
+  }, [])
 
   const handleChange = (e) => {
     const file = e.target.files 
     setFilesupload(file)
   }
 
-  const cargarArchivos = (e) => {
+    
+  const getFiles = (e) => {
+  axios.get(url + 'file/files')
+    .then((res) => {
+        setAxiosGet(res.data.files)
+      console.log('desde el main',res.data)
+      })
+    .catch((err) => {
+        console.log(err, 'No vienen los archivos')
+      })
+  } 
+
+  const cargarArchivos = async (e) => {
     e.preventDefault();
     const data = new FormData();
     for(const fl of filesupload) {
       data.append('files', fl)
     }
-   axios.post(url + 'file/upload', data)
+   const result = await axios.post(url + 'file/upload', data)
     .then((res) => {
-      console.log('archivos cargados')
+        setFilesupload(res.data.files)
     })
     .catch((err) => {
       console.log(err, 'NO se pudo cargar')
@@ -46,10 +60,14 @@ function Main() {
   }
 
 
+
+
+
+
 return (
   <>
       <NavBar />
-      <Files />
+      <Files/>
 
   <Form className="mb-3" onSubmit={cargarArchivos} >
     <Form.Label> Upload files </Form.Label>

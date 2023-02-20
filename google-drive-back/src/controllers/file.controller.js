@@ -11,7 +11,8 @@ try{
   if(!req.files || Object.keys(req.files).length === 0) {
     return res.status(400).send({Error: 'Please select files to upload'})
   }else{
-    return res.status(200).send({Message: 'Files upload successfully'})
+      let files = req.files;
+    return res.status(200).send({Message: 'Files upload successfully', files})
   }
 }catch(err) {
   console.log(err);
@@ -25,7 +26,7 @@ exports.files = async (req, res) => {
     let dir = 'uploads'
     //let dirbuff = Buffer.from(dir)
     let files = fs.readdirSync(dir)
-    if(files.length ===0) return res.status(200).send({Message: 'Not content files'})
+    if(files.length ===0) return res.status(200).send({Message: 'Not content files', files})
       return res.status(200).send({Message: 'Files', files})
     
   }catch(err) { 

@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import {url} from '../url'
 import Axios from 'axios';
-import  Box  from '@mui/material/Box';
-import { Container } from '@mui/material';
 import { File } from '../file/file';
+import './files.css'
+
 
 function Files () {
   
 
-
-
-
   const [files, setFiles] = useState([])
   
+
   const getFiles = () => {
     Axios.get(url + 'file/files')
     .then((res) => {
@@ -26,12 +24,15 @@ function Files () {
     getFiles();
   }, []);
 
-  return (
+
+
+      return (
 <div>
 <div>
 <div>
     <div className='container' >
       <div className='row' >
+              {!files.length && <h1 className='no-content' >No content files</h1> }
         {
           files.map((item, index) => {
             return (
@@ -47,6 +48,7 @@ function Files () {
     </div>
     </div>
   )
-}
+
+  }
 
 export {Files};
