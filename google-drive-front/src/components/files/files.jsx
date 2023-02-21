@@ -7,9 +7,10 @@ import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 
-function Files () {
 
-  const [files, setFiles] = useState([]);
+function Files ({searchValue, setSearchValue}) {
+  
+  const [files, setFiles] = useState([])
   const [filesupload, setFilesupload] = useState([]);
   const [open, setOpen] = useState(false)
 
@@ -21,6 +22,20 @@ function Files () {
 useEffect(() => {
     fetchData()
   }, []);
+
+
+  let searchedFiles = [];
+
+  if(!searchValue.length >= 1) {
+    searchedFiles = files;
+  }else{
+    searchedFiles = files.filter(file => {
+      const fileText = file.toLowerCase();
+      const searchText = searchValue.toLowerCase();
+      return fileText.includes(searchText);
+    })
+  }
+
 
   const handleChange = (e) => {
     const file = e.target.files
@@ -73,7 +88,7 @@ return (
           </div>
           {!files.length && <h1 style={{textAlign: 'center'}} >NO CONTENT FILES</h1>}
         {
-          files.map((item, index) => {
+          searchedFiles.map((item, index) => {
             return (
               <div className='col-md-2'key={index} >
               <File item={item}  />
